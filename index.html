@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AFINLAB · Benchmarking Sector Azucarero</title>
+<link rel="icon" href="assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-container">
+    <button class="navbar-logo" data-target="portada" aria-label="Ir al inicio">
+      <img src="assets/logo.png" alt="AFINLAB" class="logo-img-afinlab">
+    </button>
+    <ul class="navbar-menu">
+      <li><button class="navbar-link tab-btn" data-target="cce">Ciclo Comercial</button></li>
+      <li><button class="navbar-link tab-btn" data-target="liquidez">Liquidez y Apalancamiento</button></li>
+      <li><button class="navbar-link tab-btn" data-target="capital-trabajo">Capital de Trabajo</button></li>
+      <li><button class="navbar-link tab-btn" data-target="valor">Creación de Valor</button></li>
+      <li><button class="navbar-link tab-btn" data-target="patrimonio">Patrimonio</button></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="page-content">
+<section class="section active" id="portada">
+  <div class="hero">
+    <div class="eyebrow">AFINLAB · UNALM</div>
+    <h1>Benchmarking financiero del <em>sector azucarero</em> peruano</h1>
+    <p>Un análisis de 11 años (2014–2025) sobre liquidez, apalancamiento, flujo de caja y creación de valor en cinco empresas azucareras peruanas.</p>
+    <div class="companies">
+      <span>Cartavio</span><span>Casa Grande</span><span>Paramonga</span><span>San Jacinto</span><span>Laredo</span>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SECCIÓN 1: CICLO DE CONVERSIÓN DE EFECTIVO ================= -->
+<section class="section" id="cce">
+  <div class="section-head">
+    <div class="num">01 — Punto de partida</div>
+    <h2>Ciclo de Conversión de Efectivo</h2>
+    <p>El negocio azucarero tiene una particularidad: gran parte de su ciclo operativo está atado a un activo biológico (la caña), no solo a inventario o cobranza tradicional.</p>
+  </div>
+
+  <div class="kpi-row">
+    <div class="kpi-card"><div class="value">122 días</div><div class="label">Periodo activos biológicos</div></div>
+    <div class="kpi-card"><div class="value">52 días</div><div class="label">Ciclo comercial</div></div>
+    <div class="kpi-card"><div class="value">69.9%</div><div class="label">% del ciclo es biológico (2025)</div></div>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-title-bar">Periodo de activos biológicos vs. ciclo comercial (2014–2025)</div>
+    <div class="chart-body"><canvas id="chart-01" height="260"></canvas></div>
+    <div class="chart-caption">En 2014, <strong>90.3%</strong> del ciclo total era biológico. Para 2025 baja a <strong>69.9%</strong>: el ciclo comercial (cobro, inventario, pago) gana peso relativo.</div>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-title-bar">Periodo de cobro, inventario y pago a proveedores</div>
+    <div class="chart-body"><canvas id="chart-07" height="230"></canvas></div>
+    <div class="chart-caption">El periodo de cobro cae <strong>-48.6%</strong> (de 45 a 23 días) y el de pago a proveedores <strong>-51.5%</strong>. El inventario es lo único que crece: <strong>+19.2%</strong>.</div>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-title-bar">CCE promedio 2014–2025 vs. FCO acumulado por empresa</div>
+    <div class="chart-body"><canvas id="chart-03" height="240"></canvas></div>
+    <div class="chart-caption">Laredo tiene el ciclo más corto (224 días) pero no el mayor flujo. Casa Grande, con el ciclo más largo (479 días), genera el mayor FCO acumulado: S/ 993 MM.</div>
+  </div>
+
+  <div class="insight">
+    💡 Un ciclo más corto no siempre implica mejor desempeño de caja — el tamaño y la escala operativa de cada empresa importa tanto como la eficiencia del ciclo.
+  </div>
+
+  <div class="reaction-bar">
+    <button class="reaction-btn" data-count="0">💡 Interesante <span class="count">0</span></button>
+    <button class="reaction-btn" data-count="0">❓ Tengo una duda <span class="count">0</span></button>
+  </div>
+</section>
+
+<!-- ================= SECCIÓN 2: LIQUIDEZ Y APALANCAMIENTO ================= -->
+<section class="section" id="liquidez">
+  <div class="section-head">
+    <div class="num">02 — Salud financiera</div>
+    <h2>Liquidez y Apalancamiento</h2>
+    <p>¿Quién puede cubrir sus obligaciones de corto plazo sin depender del inventario, y quién ha comprometido más su estructura de capital con deuda?</p>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-title-bar">Prueba Ácida por empresa, 2014–2025</div>
+    <div class="chart-body"><div id="chart-04" class="heatmap-container"></div></div>
+    <div class="chart-caption">Umbral de suficiencia = 1.0. Cartavio y San Jacinto caen por debajo del umbral en 2025 (0.59 y 0.49), mientras Paramonga se mantiene sólido (1.40).</div>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-title-bar">Cuadrante: Prueba Ácida vs. D/E (2025)</div>
+    <div class="chart-body"><canvas id="chart-02" height="260"></canvas></div>
+    <div class="chart-caption"><strong>Tensión doble:</strong> Cartavio y San Jacinto combinan baja liquidez con alto apalancamiento. <strong>Mayor holgura:</strong> Paramonga y Laredo están cómodos en ambos frentes.</div>
+  </div>
+
+  <div class="alert-callout">
+    ⚠️ Cartavio pasa de un D/E de 168% siendo el líder sectorial, a la vez que su prueba ácida cae a 0.59 — la empresa con más apalancamiento también es la más ajustada en liquidez.
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-title-bar">D/E agregado del sector: tres fases</div>
+    <div class="chart-body"><canvas id="chart-10" height="240"></canvas></div>
+    <div class="chart-caption"><strong>Meseta</strong> (2014–2020, ~39%) → <strong>Quiebre</strong> (2021–2022, salto a 60–77%) → <strong>Consolidación</strong> (2023–2025, hasta 86.5%). El sector casi duplicó su apalancamiento en 5 años.</div>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-title-bar">Ranking de D/E por empresa (2014–2025)</div>
+    <div class="chart-body"><canvas id="chart-11" height="250"></canvas></div>
+    <div class="chart-caption">Cartavio toma el primer lugar en apalancamiento justo durante el "bienio del quiebre" (2021–2022) y no lo suelta hasta 2025.</div>
+  </div>
+
+  <div class="reaction-bar">
+    <button class="reaction-btn" data-count="0">💡 Interesante <span class="count">0</span></button>
+    <button class="reaction-btn" data-count="0">❓ Tengo una duda <span class="count">0</span></button>
+  </div>
+</section>
+
+<!-- ================= SECCIÓN 3: CAPITAL DE TRABAJO Y FLUJO DE CAJA ================= -->
+<section class="section" id="capital-trabajo">
+  <div class="section-head">
+    <div class="num">03 — Operación</div>
+    <h2>Capital de Trabajo y Flujo de Caja</h2>
+    <p>¿De qué está hecha la necesidad operativa de fondos (NOF), y qué tan bien se convierte el EBIT en caja real?</p>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-title-bar">Composición de la NOF (participación relativa, %)</div>
+    <div class="chart-body"><canvas id="chart-09" height="240"></canvas></div>
+    <div class="chart-caption">El activo biológico representa <strong>48%</strong> de la NOF en 2025 — la partida dominante y la más difícil de comprimir, por su naturaleza agrícola.</div>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-title-bar">Fondo de Maniobra vs. NOF: el déficit estructural</div>
+    <div class="chart-body"><canvas id="chart-08" height="240"></canvas></div>
+    <div class="chart-caption">Desde 2023 el Fondo de Maniobra cae por debajo de la NOF. En 2025 la Posición de Tesorería Neta (PTN) llega a <strong>−S/ 764 MM</strong>: un déficit estructural de tesorería.</div>
+  </div>
+
+  <div class="alert-callout">
+    ⚠️ Un PTN negativo sostenido significa que la operación depende de financiamiento de corto plazo para cubrir su capital de trabajo — no es un evento puntual, es una tendencia desde 2022.
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-title-bar">De EBIT a Flujo de Caja Operativo (FCO)</div>
+    <div class="chart-body"><canvas id="chart-06" height="240"></canvas></div>
+    <div class="chart-caption">De S/ 593 MM de EBIT, los impuestos (−S/ 163 MM) y el incremento en NOF (−S/ 30 MM) explican casi toda la brecha hasta los S/ 479 MM de FCO final: poca retención de capital de trabajo.</div>
+  </div>
+
+  <div class="reaction-bar">
+    <button class="reaction-btn" data-count="0">💡 Interesante <span class="count">0</span></button>
+    <button class="reaction-btn" data-count="0">❓ Tengo una duda <span class="count">0</span></button>
+  </div>
+</section>
+
+<!-- ================= SECCIÓN 4: CREACIÓN DE VALOR ================= -->
+<section class="section" id="valor">
+  <div class="section-head">
+    <div class="num">04 — El veredicto</div>
+    <h2>Creación de Valor: ROIC, WACC y EVA</h2>
+    <p>Generar caja no es lo mismo que crear valor. Aquí comparamos el retorno sobre el capital invertido contra su costo.</p>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-title-bar">Spread ROIC−WACC y EVA sectorial (2014–2025)</div>
+    <div class="chart-body"><canvas id="chart-13" height="250"></canvas></div>
+    <div class="chart-caption">El sector pasa de destruir valor sistemáticamente (2014–2019) a crearlo en 2020–2024, para volver a destruirlo en 2025 (EVA −S/ 176 MM).</div>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-title-bar">FCO acumulado vs. EVA acumulado 2015–2025, por empresa</div>
+    <div class="chart-body"><canvas id="chart-05" height="260"></canvas></div>
+    <div class="chart-caption">Cartavio crea valor con menos FCO que Casa Grande (que apenas rompe el cero). Paramonga y Laredo, pese a generar caja, destruyen valor: −S/ 378 MM y −S/ 424 MM respectivamente.</div>
+  </div>
+
+  <div class="insight">
+    💡 Generar flujo de caja operativo alto no garantiza crear valor — depende de si el retorno supera el costo de ese capital invertido.
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-title-bar">D/E 2025 vs. spread ROIC−WACC (tamaño = capital invertido)</div>
+    <div class="chart-body"><canvas id="chart-14" height="260"></canvas></div>
+    <div class="chart-caption">Cartavio combina el mayor apalancamiento con el mayor spread positivo. Laredo y Paramonga, con menor deuda, están en zona de destrucción de valor.</div>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-title-bar">ROIC reportado vs. ROIC contrafactual (planta congelada)</div>
+    <div class="chart-body"><canvas id="chart-15" height="240"></canvas></div>
+    <div class="chart-caption">Si el capital invertido se hubiera "congelado" en su nivel de 2022, el ROIC de 2024 habría sido <strong>10.90%</strong> en vez del 4.11% reportado: +6.79 puntos porcentuales de diferencia por la expansión de capital.</div>
+  </div>
+
+  <div class="reaction-bar">
+    <button class="reaction-btn" data-count="0">💡 Interesante <span class="count">0</span></button>
+    <button class="reaction-btn" data-count="0">❓ Tengo una duda <span class="count">0</span></button>
+  </div>
+</section>
+
+<!-- ================= SECCIÓN 5: PATRIMONIO (CIERRE) ================= -->
+<section class="section" id="patrimonio">
+  <div class="section-head">
+    <div class="num">05 — Cierre</div>
+    <h2>Patrimonio: de pico a cierre</h2>
+    <p>El resultado final de once años de operación, reinversión y ajustes se refleja en el patrimonio del sector.</p>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-title-bar">Del patrimonio pico al patrimonio de cierre</div>
+    <div class="chart-body"><canvas id="chart-12" height="250"></canvas></div>
+    <div class="chart-caption">Utilidades (+S/ 1,196 MM) y revaluación (+S/ 528 MM) impulsan el patrimonio, pero un ajuste implícito de −S/ 2,076 MM —asociado a salidas y distribución patrimonial— reduce el cierre a S/ 3,448 MM.</div>
+  </div>
+</section>
+
+<div class="closing">
+  <h2>Gracias por seguir el análisis</h2>
+  <p>Este micrositio acompaña la exposición en vivo de AFINLAB — semillero de investigación en finanzas aplicadas, UNALM.</p>
+  <p style="font-size:0.85rem;color:#9fd6b3;margin-top:-14px;">¿Preguntas? Levanta la mano, te acercamos el micrófono 🎤</p>
+</div>
+</div><!-- /.page-content -->
+
+<footer>
+  AFINLAB · Semillero de Investigación en Finanzas Aplicadas · UNALM 2026
+</footer>
+
+<script src="js/chart.min.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
