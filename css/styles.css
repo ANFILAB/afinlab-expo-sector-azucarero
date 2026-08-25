@@ -192,23 +192,66 @@ img { max-width: 100%; display: block; }
   max-width: 620px;
   margin: 0 auto 28px;
 }
-.hero .companies {
+
+#portada.active { display: flex; align-items: center; justify-content: center; min-height: calc(100vh - 130px); position: relative; overflow: hidden; }
+#portada .hero {
+  padding: 40px 44px;
+  position: relative;
+  z-index: 3;
+  background: rgba(255,255,255,0.55);
+  border-radius: 24px;
+  backdrop-filter: blur(3px);
+}
+
+/* Fondo de caña de azúcar con overlay oscuro (mismo patrón que el hero del sitio central) */
+#portada.active::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: url('../assets/img/cana-fondo.jpg');
+  background-size: cover;
+  background-position: center 35%;
+  filter: brightness(0.95) saturate(1.1);
+  z-index: 1;
+}
+#portada.active::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(247,248,250,0.35) 0%, rgba(247,248,250,0.55) 45%, rgba(247,248,250,0.85) 100%);
+  z-index: 2;
+}
+
+/* Tarjetas circulares de empresa (foto + nombre) */
+.companies-photos {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  gap: 22px;
+  margin-top: 8px;
+}
+.company-photo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: 8px;
 }
-.hero .companies span {
-  background: var(--azul-marino);
-  color: #fff;
-  padding: 6px 14px;
-  border-radius: 999px;
-  font-size: 0.78rem;
-  font-weight: 600;
+.company-photo img {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #fff;
+  box-shadow: var(--shadow-medium);
+  transition: var(--transition-smooth);
 }
-
-#portada.active { display: flex; align-items: center; justify-content: center; min-height: calc(100vh - 130px); }
-#portada .hero { padding: 24px; }
+.company-photo:hover img { transform: translateY(-4px) scale(1.04); }
+.company-photo span {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--azul-marino);
+  background: rgba(255,255,255,0.85);
+  padding: 3px 12px;
+  border-radius: 999px;
+}
 
 .btn-comenzar {
   margin-top: 12px;
@@ -305,6 +348,29 @@ img { max-width: 100%; display: block; }
 .chart-card .chart-body { padding: 4px; background: #fdfdfb; max-height: 340px; display: flex; align-items: center; justify-content: center; }
 .chart-card .chart-body canvas { max-width: 100%; max-height: 320px; padding: 10px; }
 
+.chart-card .chart-body.chart-body-with-side {
+  display: grid;
+  grid-template-columns: 1fr 130px;
+  gap: 16px;
+  align-items: center;
+}
+.chart-body-with-side canvas { width: 100% !important; min-width: 0; }
+.chart-side-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-right: 16px;
+}
+.side-stat { display: flex; flex-direction: column; }
+.side-stat-value { font-size: 1.3rem; font-weight: 800; }
+.side-stat-label { font-size: 0.72rem; color: var(--texto-suave); text-transform: uppercase; letter-spacing: 0.3px; }
+.side-stat-comercial .side-stat-value { color: var(--terracota, #a0522d); }
+.side-stat-bio .side-stat-value { color: var(--verde-oscuro); }
+@media (max-width: 600px) {
+  .chart-card .chart-body.chart-body-with-side { grid-template-columns: 1fr; }
+  .chart-side-stats { flex-direction: row; padding-right: 0; padding-top: 8px; }
+}
+
 /* Heatmap (tabla HTML generada por JS) */
 .heatmap-container { overflow-x: auto; padding: 14px; }
 .heatmap-table { border-collapse: collapse; width: 100%; font-size: 0.8rem; }
@@ -343,31 +409,6 @@ img { max-width: 100%; display: block; }
   font-size: 0.88rem;
   margin: 20px 0;
 }
-
-/* Reaction bar */
-.reaction-bar {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 24px;
-}
-.reaction-btn {
-  background: #fff;
-  border: 1.5px solid var(--borde);
-  border-radius: 999px;
-  padding: 8px 16px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--azul-marino);
-  cursor: pointer;
-  transition: all 0.15s ease;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.reaction-btn:hover { border-color: var(--verde); transform: translateY(-1px); }
-.reaction-btn.just-clicked { background: var(--verde); color: #fff; border-color: var(--verde); }
-.reaction-btn .count { font-weight: 800; }
 
 /* ---------- CLOSING / Q&A ---------- */
 .closing {

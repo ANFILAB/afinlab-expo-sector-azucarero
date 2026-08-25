@@ -27,15 +27,3 @@ function goToSection(target) {
 tabButtons.forEach(btn => {
   btn.addEventListener('click', () => goToSection(btn.dataset.target));
 });
-
-// ---------- REACCIONES POR SECCIÓN ----------
-// Contador local por dispositivo (no compartido entre asistentes: no hay backend).
-document.querySelectorAll('.reaction-btn').forEach(btn => {
-  let count = parseInt(btn.dataset.count || '0', 10);
-  btn.addEventListener('click', () => {
-    count++;
-    btn.querySelector('.count').textContent = count;
-    btn.classList.add('just-clicked');
-    setTimeout(() => btn.classList.remove('just-clicked'), 400);
-  });
-});

@@ -1227,9 +1227,9 @@ null,
 },
 "grupo_coazucar": {
 "CARTAVIO": "Coazúcar",
-"LAREDO": "Coazúcar",
-"PARAMONGA": "No-Coazúcar",
-"SAN JACINTO": "No-Coazúcar",
-"CASA GRANDE": "No-Coazúcar"
+"SAN JACINTO": "Coazúcar",
+"CASA GRANDE": "Coazúcar",
+"LAREDO": "No-Coazúcar",
+"PARAMONGA": "No-Coazúcar"
 }
 }

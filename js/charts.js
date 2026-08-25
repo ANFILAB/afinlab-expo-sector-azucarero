@@ -1,3 +1,5 @@
+console.log('%c✅ charts.js v9 cargada (ROIC etiquetas horizontales)', 'background:#0b6b3a;color:#fff;padding:4px 8px;border-radius:4px;');
+
 // ============================================================
 // PALETA (misma identidad AFINLAB)
 // ============================================================
@@ -77,26 +79,107 @@ function buildAllCharts() {
   chart15_roicContrafactual();
 }
 
-// ---------- 1. Área CCE biológico vs comercial ----------
+// Plugin: dibuja etiquetas de texto con caja de fondo en coordenadas de datos específicas
+function labelBoxPlugin(labels) {
+  return {
+    id: 'labelBoxPlugin_' + Math.random(),
+    afterDatasetsDraw(chart) {
+      const { ctx, scales } = chart;
+      labels.forEach(l => {
+        const x = scales.x.getPixelForValue(l.xValue);
+        const y = scales.y.getPixelForValue(l.yValue);
+        ctx.save();
+        ctx.font = 'bold 13px Inter, sans-serif';
+        const lines = l.text;
+        const boxW = Math.max(...lines.map(t => ctx.measureText(t).width)) + 20;
+        const boxH = lines.length * 18 + 14;
+        const boxX = x + (l.align === 'right' ? -boxW - 8 : 8);
+        const boxY = y + (l.dy || 0) - boxH / 2;
+        ctx.fillStyle = l.color;
+        ctx.beginPath();
+        ctx.roundRect ? ctx.roundRect(boxX, boxY, boxW, boxH, 6) : ctx.rect(boxX, boxY, boxW, boxH);
+        ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.textAlign = 'center';
+        lines.forEach((line, i) => {
+          ctx.fillText(line, boxX + boxW / 2, boxY + 18 + i * 18);
+        });
+        ctx.restore();
+      });
+    }
+  };
+}
+
+// Plugin: dibuja un porcentaje pequeño encima de cada punto del área apilada
+function percentLabelsPlugin(anios, bio, com) {
+  return {
+    id: 'percentLabelsPlugin',
+    afterDatasetsDraw(chart) {
+      const { ctx, scales } = chart;
+      ctx.save();
+      ctx.font = '700 10px Inter, sans-serif';
+      ctx.fillStyle = '#0a4d2c';
+      ctx.textAlign = 'center';
+      anios.forEach((anio, i) => {
+        const pct = ((bio[i] / (bio[i] + com[i])) * 100).toFixed(0);
+        const x = scales.x.getPixelForValue(anio);
+        const yTop = scales.y.getPixelForValue(bio[i] + com[i]);
+        ctx.fillText(pct + '%', x, yTop - 8);
+      });
+      ctx.restore();
+    }
+  };
+}
+
+// ---------- 1. Área CCE biológico vs comercial (apilada, como el original) ----------
 function chart01_cceArea() {
   const ctx = document.getElementById('chart-01').getContext('2d');
   const anios = DATA.anios;
   const bio = DATA.cce_componentes.bio;
   const com = DATA.cce_componentes.comercial;
+  const comApilado = bio.map((b, i) => b + com[i]); // punto visual = bio + comercial (apilado)
+  const total0 = bio[0] + com[0];
+  const totalLast = bio[bio.length - 1] + com[com.length - 1];
+  const pct0 = ((bio[0] / total0) * 100).toFixed(1);
+  const pctLast = ((bio[bio.length - 1] / totalLast) * 100).toFixed(1);
   new Chart(ctx, {
     type: 'line',
     data: {
       labels: anios,
       datasets: [
-        { label: 'Periodo de activos biológicos', data: bio, borderColor: COLOR.bio, backgroundColor: 'rgba(127,174,140,0.55)', fill: true, tension: 0.3, pointRadius: 3 },
-        { label: 'Ciclo comercial', data: com, borderColor: COLOR.comercial, backgroundColor: 'rgba(201,138,99,0.55)', fill: true, tension: 0.3, pointRadius: 3 }
+        { label: 'Periodo de activos biológicos', data: bio, borderColor: COLOR.bio, backgroundColor: 'rgba(127,174,140,0.65)', fill: 'origin', tension: 0.3, pointRadius: 3 },
+        { label: 'Ciclo comercial', data: comApilado, borderColor: '#3a3a3a', backgroundColor: 'rgba(201,138,99,0.65)', fill: '-1', tension: 0.3, pointRadius: 3 }
       ]
     },
+    plugins: [
+      percentLabelsPlugin(anios, bio, com),
+      labelBoxPlugin([
+        { xValue: anios[0], yValue: total0, text: [pct0 + '%', 'biológico'], color: COLOR.verdeOscuro, align: 'left', dy: -20 },
+        { xValue: anios[anios.length - 1], yValue: bio[bio.length - 1] / 2, text: [pctLast + '%', 'biológico'], color: COLOR.verdeOscuro, align: 'right', dy: 0 },
+      ])
+    ],
     options: {
       responsive: true,
       interaction: { mode: 'index', intersect: false },
-      plugins: { legend: { position: 'top' }, tooltip: { callbacks: { label: (c) => `${c.dataset.label}: ${fmt(c.raw)} días` } } },
-      scales: { y: { stacked: false, title: { display: true, text: 'Días' } } }
+      layout: { padding: { top: 34 } },
+      plugins: {
+        legend: { position: 'top' },
+        tooltip: {
+          callbacks: {
+            label: (c) => {
+              // Mostrar siempre el valor REAL de cada serie, no el acumulado usado para apilar
+              if (c.datasetIndex === 0) return `Periodo de activos biológicos: ${fmt(bio[c.dataIndex])} días`;
+              return `Ciclo comercial: ${fmt(com[c.dataIndex])} días`;
+            },
+            afterBody: (items) => {
+              const i = items[0].dataIndex;
+              const pct = ((bio[i] / (bio[i] + com[i])) * 100).toFixed(1);
+              return [`→ ${pct}% del ciclo total es biológico`];
+            }
+          }
+        }
+      },
+      scales: { y: { title: { display: true, text: 'Días' } } }
     }
   });
 }
@@ -108,35 +191,66 @@ function chart02_cuadrantePaDe() {
   const points = empresas.map(e => {
     const pa = DATA.empresas[e]['Prueba Ácida'][11];
     const de = DATA.empresas[e]['D/E'][11] * 100;
-    return { x: pa, y: de, empresa: e };
+    return { x: pa, y: de, empresa: e, esCoazucar: DATA.grupo_coazucar[e] === 'Coazúcar' };
   });
   new Chart(ctx, {
     type: 'scatter',
     data: {
-      datasets: [{
-        label: 'Empresas',
-        data: points,
-        backgroundColor: points.map(p => DATA.grupo_coazucar[p.empresa] === 'Coazúcar' ? COLOR.azulMarino : COLOR.terracota),
-        pointRadius: 8, pointHoverRadius: 11
-      }]
+      datasets: [
+        { label: 'Coazúcar', data: points.filter(p => p.esCoazucar), backgroundColor: COLOR.verde, pointRadius: 8, pointHoverRadius: 11 },
+        { label: 'No-Coazúcar', data: points.filter(p => !p.esCoazucar), backgroundColor: COLOR.terracota, pointRadius: 8, pointHoverRadius: 11 }
+      ]
     },
-    plugins: [zonePlugin([
-      { x1: 0, x2: 1.0, y1: 100, y2: 300, color: 'rgba(160,82,45,0.08)' },
-      { x1: 1.0, x2: 2.0, y1: 0, y2: 100, color: 'rgba(11,107,58,0.08)' },
-    ])],
+    plugins: [
+      zonePlugin([
+        { x1: 0, x2: 1.0, y1: 100, y2: 300, color: 'rgba(160,82,45,0.08)' },
+        { x1: 1.0, x2: 2.0, y1: 0, y2: 100, color: 'rgba(11,107,58,0.08)' },
+      ]),
+      {
+        id: 'quadrantLabelsAndNames',
+        afterDatasetsDraw(chart) {
+          const { ctx, scales } = chart;
+          ctx.save();
+          // Textos de cuadrante
+          ctx.font = '700 11px Inter, sans-serif';
+          ctx.fillStyle = COLOR.terracota;
+          ctx.textAlign = 'left';
+          ctx.fillText('TENSIÓN DOBLE', scales.x.getPixelForValue(0.35), scales.y.getPixelForValue(178));
+          ctx.fillStyle = COLOR.verdeOscuro;
+          ctx.textAlign = 'right';
+          ctx.fillText('MAYOR HOLGURA', scales.x.getPixelForValue(scales.x.max) - 6, scales.y.getPixelForValue(scales.y.min) - 8);
+          // Nombre + cifras junto a cada punto (permanente, no solo tooltip)
+          // Desplazamiento manual para pares de puntos muy cercanos (evita solape)
+          const offsets = { 'SAN JACINTO': -14, 'CASA GRANDE': 16 };
+          ctx.font = '700 11px Inter, sans-serif';
+          points.forEach(p => {
+            const x = scales.x.getPixelForValue(p.x);
+            const yBase = scales.y.getPixelForValue(p.y);
+            const yLabel = yBase + (offsets[p.empresa] || 0);
+            ctx.textAlign = 'left';
+            ctx.fillStyle = p.esCoazucar ? COLOR.verdeOscuro : COLOR.terracota;
+            ctx.fillText(p.empresa.charAt(0) + p.empresa.slice(1).toLowerCase(), x + 12, yLabel - 8);
+            ctx.font = '600 10px Inter, sans-serif';
+            ctx.fillText(`PA ${fmt(p.x,2)} · D/E ${fmt(p.y,0)}%`, x + 12, yLabel + 6);
+            ctx.font = '700 11px Inter, sans-serif';
+          });
+          ctx.restore();
+        }
+      }
+    ],
     options: {
       responsive: true,
+      layout: { padding: { top: 10, right: 40 } },
       plugins: {
-        legend: { display: false },
+        legend: { position: 'top', align: 'end' },
         tooltip: { callbacks: { label: (c) => `${c.raw.empresa}: PA ${fmt(c.raw.x,2)} · D/E ${fmt(c.raw.y,0)}%` } }
       },
       scales: {
-        x: { title: { display: true, text: 'Prueba Ácida 2025' }, min: 0.3 },
+        x: { title: { display: true, text: 'Prueba Ácida 2025' }, min: 0.3, max: 1.6 },
         y: { title: { display: true, text: 'D/E 2025 (%)' } }
       }
     }
   });
-  // Etiquetas de cuadrante como texto HTML superpuesto simple vía anotación en caption (ya en el HTML)
 }
 
 // ---------- 3. CCE promedio vs FCO acumulado (dumbbell horizontal) ----------
@@ -267,18 +381,53 @@ function chart06_ebitFco() {
 }
 
 // ---------- 7. Periodos comerciales (slope 2014 vs 2025) ----------
+// Plugin: dibuja texto plano (sin caja) junto al punto final de cada línea, con valor y % de cambio
+// Usa la posición YA CALCULADA del punto por Chart.js (más confiable que recalcular con getPixelForValue,
+// especialmente en ejes invertidos como el ranking).
+function endpointLabelsPlugin(items) {
+  return {
+    id: 'endpointLabelsPlugin_' + Math.random(),
+    afterDatasetsDraw(chart) {
+      const { ctx } = chart;
+      ctx.save();
+      ctx.textAlign = 'left';
+      items.forEach(it => {
+        const meta = chart.getDatasetMeta(it.datasetIndex);
+        const point = meta.data[it.dataIndex];
+        if (!point) return;
+        const x = point.x + 12;
+        const y = point.y;
+        ctx.font = '700 12px Inter, sans-serif';
+        ctx.fillStyle = it.color;
+        ctx.fillText(it.line1, x, y - 4);
+        ctx.font = '700 11px Inter, sans-serif';
+        ctx.fillText(it.line2, x, y + 12);
+      });
+      ctx.restore();
+    }
+  };
+}
+
 function chart07_periodosComerciales() {
   const ctx = document.getElementById('chart-07').getContext('2d');
   const s = DATA.slope_comercial;
-  const datasets = Object.keys(s).map((k, i) => {
-    const colors = [COLOR.azulMedio, COLOR.comercial, COLOR.terracota];
+  const colors = [COLOR.azulMedio, COLOR.comercial, COLOR.terracota];
+  const keys = Object.keys(s);
+  const datasets = keys.map((k, i) => {
     return { label: k, data: [s[k]["2014"], s[k]["2025"]], borderColor: colors[i], backgroundColor: colors[i], pointRadius: 6, tension: 0 };
+  });
+  const endpointItems = keys.map((k, i) => {
+    const v2014 = s[k]["2014"], v2025 = s[k]["2025"];
+    const pct = ((v2025 - v2014) / v2014 * 100).toFixed(1);
+    return { datasetIndex: i, dataIndex: 1, color: colors[i], line1: fmt(v2025, 2) + ' días', line2: (pct >= 0 ? '+' : '') + pct + '%' };
   });
   new Chart(ctx, {
     type: 'line',
     data: { labels: ['2014', '2025'], datasets },
+    plugins: [endpointLabelsPlugin(endpointItems)],
     options: {
       responsive: true,
+      layout: { padding: { right: 60 } },
       plugins: { legend: { position: 'top' }, tooltip: { callbacks: { label: (c) => `${c.dataset.label}: ${fmt(c.raw,2)} días` } } },
       scales: { y: { title: { display: true, text: 'Días' } } }
     }
@@ -291,6 +440,40 @@ function chart08_fmVsNof() {
   const anios = DATA.anios;
   const fm = DATA.fm_sector_miles.map(v => v/1000);
   const nof = DATA.nof_sector_miles.map(v => v/1000);
+  const ptn = DATA.ptn_millones;
+  const puntosClave = [2017, 2021, 2025];
+
+  const ptnLabelsPlugin = {
+    id: 'ptnLabelsPlugin',
+    afterDatasetsDraw(chart) {
+      const { ctx } = chart;
+      ctx.save();
+      puntosClave.forEach(anio => {
+        const i = anios.indexOf(anio);
+        const metaFM = chart.getDatasetMeta(0).data[i];
+        const metaNOF = chart.getDatasetMeta(1).data[i];
+        if (!metaFM || !metaNOF) return;
+        const valor = ptn[i];
+        const text = `PTN ${valor >= 0 ? '+' : '−'}S/ ${fmt(Math.abs(valor), 0)} MM`;
+        const color = valor >= 0 ? COLOR.verdeOscuro : COLOR.terracota;
+        const x = (metaFM.x + metaNOF.x) / 2;
+        const y = (metaFM.y + metaNOF.y) / 2;
+        ctx.font = '700 12px Inter, sans-serif';
+        const w = ctx.measureText(text).width + 16;
+        const isLast = anio === anios[anios.length - 1];
+        const boxX = isLast ? x - w - 10 : x - w / 2;
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.roundRect ? ctx.roundRect(boxX, y - 12, w, 22, 6) : ctx.rect(boxX, y - 12, w, 22);
+        ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.textAlign = 'center';
+        ctx.fillText(text, boxX + w / 2, y + 4);
+      });
+      ctx.restore();
+    }
+  };
+
   new Chart(ctx, {
     type: 'line',
     data: {
@@ -300,9 +483,11 @@ function chart08_fmVsNof() {
         { label: 'NOF', data: nof, borderColor: COLOR.terracota, backgroundColor: 'transparent', tension: 0.25, pointRadius: 3, fill: false },
       ]
     },
+    plugins: [ptnLabelsPlugin],
     options: {
       responsive: true,
       interaction: { mode: 'index', intersect: false },
+      layout: { padding: { top: 20, right: 40 } },
       plugins: {
         legend: { position: 'top' },
         tooltip: { callbacks: { label: (c) => `${c.dataset.label}: S/ ${fmt(c.raw,0)} MM` } }
@@ -346,13 +531,56 @@ function chart10_deAgregadoFases() {
   new Chart(ctx, {
     type: 'line',
     data: { labels: anios, datasets: [{ label: 'D/E agregado (%)', data: de, borderColor: COLOR.terracota, backgroundColor: 'transparent', stepped: true, pointRadius: 4 }] },
-    plugins: [zonePlugin([
-      { x1: 2014, x2: 2020.5, y1: 0, y2: 100, color: 'rgba(0,0,0,0.03)' },
-      { x1: 2020.5, x2: 2022.5, y1: 0, y2: 100, color: 'rgba(160,82,45,0.08)' },
-      { x1: 2022.5, x2: 2025, y1: 0, y2: 100, color: 'rgba(160,82,45,0.04)' },
-    ])],
+    plugins: [
+      zonePlugin([
+        { x1: 2014, x2: 2020.5, y1: 0, y2: 100, color: 'rgba(0,0,0,0.05)' },
+        { x1: 2020.5, x2: 2022.5, y1: 0, y2: 100, color: 'rgba(160,82,45,0.10)' },
+        { x1: 2022.5, x2: 2025, y1: 0, y2: 100, color: 'rgba(160,82,45,0.05)' },
+      ]),
+      {
+        id: 'fasesLabelsPlugin',
+        afterDatasetsDraw(chart) {
+          const { ctx, scales } = chart;
+          ctx.save();
+          // Títulos de fase arriba de cada banda
+          ctx.font = '700 12px Inter, sans-serif';
+          ctx.textAlign = 'center';
+          const yTitle = scales.y.getPixelForValue(scales.y.max) + 16;
+          ctx.fillStyle = '#6b7280';
+          ctx.fillText('Meseta', scales.x.getPixelForValue(2017), yTitle);
+          ctx.fillStyle = COLOR.terracota;
+          ctx.fillText('Quiebre', scales.x.getPixelForValue(2021.5), yTitle);
+          ctx.fillText('Consolidación', scales.x.getPixelForValue(2023.7), yTitle);
+
+          // Cajas destacadas de porcentaje en los años clave
+          const highlights = [
+            { anio: 2017, dy: -22, bg: '#8a94a6' },
+            { anio: 2021, dy: -22, bg: COLOR.terracota },
+            { anio: 2022, dy: 22, bg: COLOR.terracota },
+            { anio: 2025, dy: -22, bg: COLOR.terracota },
+          ];
+          highlights.forEach(h => {
+            const idx = anios.indexOf(h.anio);
+            const val = de[idx];
+            const text = fmt(val, 2) + '%';
+            const x = scales.x.getPixelForValue(h.anio);
+            const y = scales.y.getPixelForValue(val) + h.dy;
+            ctx.font = '700 12px Inter, sans-serif';
+            const w = ctx.measureText(text).width + 16;
+            ctx.fillStyle = h.bg;
+            ctx.beginPath();
+            ctx.roundRect ? ctx.roundRect(x - w / 2, y - 12, w, 22, 6) : ctx.rect(x - w / 2, y - 12, w, 22);
+            ctx.fill();
+            ctx.fillStyle = '#fff';
+            ctx.fillText(text, x, y + 4);
+          });
+          ctx.restore();
+        }
+      }
+    ],
     options: {
       responsive: true,
+      layout: { padding: { top: 34 } },
       plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => `D/E agregado: ${fmt(c.raw,2)}%` } } },
       scales: { y: { title: { display: true, text: 'D/E agregado (%)' } } }
     }
@@ -368,14 +596,20 @@ function chart11_rankingDe() {
     label: e, data: DATA.ranking_de[e], borderColor: EMPRESAS_COLOR[e], backgroundColor: EMPRESAS_COLOR[e],
     pointRadius: 5, tension: 0, borderWidth: 2.5
   }));
+  const nombreBonito = e => e.charAt(0) + e.slice(1).toLowerCase().replace(/ (\w)/g, (m, c) => ' ' + c.toUpperCase());
+  const endpointItems = empresas.map((e, i) => {
+    const deLast = DATA.empresas[e]['D/E'][11] * 100;
+    return { datasetIndex: i, dataIndex: anios.length - 1, color: EMPRESAS_COLOR[e], line1: nombreBonito(e), line2: fmt(deLast, 1) + '%' };
+  });
   new Chart(ctx, {
     type: 'line',
     data: { labels: anios, datasets },
-    plugins: [zonePlugin([{ x1: 2021, x2: 2022, y1: 0.5, y2: 5.5, color: 'rgba(184,134,11,0.08)' }])],
+    plugins: [zonePlugin([{ x1: 2021, x2: 2022, y1: 0.5, y2: 5.5, color: 'rgba(184,134,11,0.08)' }]), endpointLabelsPlugin(endpointItems)],
     options: {
       responsive: true,
+      layout: { padding: { right: 90 } },
       plugins: {
-        legend: { position: 'top' },
+        legend: { display: false },
         tooltip: { callbacks: { label: (c) => `${c.dataset.label}: #${c.raw} en D/E` } }
       },
       scales: { y: { reverse: true, min: 0.5, max: 5.5, ticks: { stepSize: 1, callback: v => '#' + v }, title: { display: true, text: 'Posición (ranking)' } } }
@@ -421,12 +655,15 @@ function chart13_roicWaccEva() {
   const anios = DATA.anios;
   const spread = anios.map(a => +(DATA.roic_sectorial[String(a)] - DATA.wacc_sectorial[String(a)]).toFixed(2));
   const eva = DATA.eva_sector_millones;
+  const spreadPos = spread.map(v => v >= 0 ? v : null);
+  const spreadNeg = spread.map(v => v < 0 ? v : null);
   new Chart(ctx, {
     data: {
       labels: anios,
       datasets: [
-        { type: 'bar', label: 'Spread ROIC−WACC (pp)', data: spread, backgroundColor: spread.map(v => v>=0?COLOR.verde:COLOR.terracota), yAxisID: 'y' },
-        { type: 'line', label: 'EVA sectorial (S/ MM)', data: eva, borderColor: '#1a1a1a', backgroundColor: '#1a1a1a', yAxisID: 'y1', tension: 0.2, pointRadius: 3 }
+        { type: 'bar', label: 'Spread positivo', data: spreadPos, backgroundColor: COLOR.verde, yAxisID: 'y', stack: 'spread' },
+        { type: 'bar', label: 'Spread negativo', data: spreadNeg, backgroundColor: COLOR.terracota, yAxisID: 'y', stack: 'spread' },
+        { type: 'line', label: 'EVA', data: eva, borderColor: '#1a1a1a', backgroundColor: '#1a1a1a', yAxisID: 'y1', tension: 0.2, pointRadius: 3 }
       ]
     },
     options: {
@@ -436,8 +673,10 @@ function chart13_roicWaccEva() {
         tooltip: { callbacks: { label: (c) => c.dataset.yAxisID === 'y' ? `Spread: ${fmt(c.raw,2)} pp` : `EVA: S/ ${fmt(c.raw,0)} MM` } }
       },
       scales: {
-        y: { position: 'left', title: { display: true, text: 'ROIC − WACC (pp)' } },
-        y1: { position: 'right', grid: { drawOnChartArea: false }, title: { display: true, text: 'EVA sectorial (S/ MM)' } }
+        // Rangos simétricos alrededor de cero en ambos ejes para que el 0 quede a la misma
+        // altura visual y las barras / la línea se lean en la misma "fila" cuando corresponde.
+        y: { position: 'left', min: -6, max: 6, title: { display: true, text: 'ROIC − WACC (pp)' } },
+        y1: { position: 'right', min: -200, max: 200, grid: { drawOnChartArea: false }, title: { display: true, text: 'EVA sectorial (S/ MM)' } }
       }
     }
   });
@@ -455,7 +694,7 @@ function chart14_burbujaDeSpread() {
   }));
   new Chart(ctx, {
     type: 'bubble',
-    data: { datasets: [{ data: points, backgroundColor: points.map(p => (DATA.grupo_coazucar[p.empresa]==='Coazúcar'?COLOR.azulMarino:COLOR.terracota) + 'aa') }] },
+    data: { datasets: [{ data: points, backgroundColor: points.map(p => (DATA.grupo_coazucar[p.empresa]==='Coazúcar'?COLOR.verdeOscuro:COLOR.terracota) + 'aa') }] },
     plugins: [zonePlugin([
       { y1: 0, y2: 10, color: 'rgba(11,107,58,0.05)' },
       { y1: -10, y2: 0, color: 'rgba(160,82,45,0.05)' },
@@ -479,19 +718,80 @@ function chart15_roicContrafactual() {
   const ctx = document.getElementById('chart-15').getContext('2d');
   const reportado = { '2022': DATA.empresas['PARAMONGA']['ROIC'][8]*100, '2024': DATA.empresas['PARAMONGA']['ROIC'][10]*100 };
   const cf = DATA.roic_paramonga_contrafactual;
+
+  const roicLabelsPlugin = {
+    id: 'roicLabelsPlugin',
+    afterDatasetsDraw(chart) {
+      const { ctx } = chart;
+      ctx.save();
+      [0, 1].forEach(datasetIndex => {
+        const meta = chart.getDatasetMeta(datasetIndex);
+        const p0 = meta.data[0]; // ROIC reportado
+        const p1 = meta.data[1]; // ROIC contrafactual
+        if (!p0 || !p1) return;
+        const color = datasetIndex === 0 ? COLOR.verdeOscuro : COLOR.terracota;
+        const year = datasetIndex === 0 ? '2022' : '2024';
+        const v0 = datasetIndex === 0 ? reportado['2022'] : reportado['2024'];
+        const v1 = datasetIndex === 0 ? cf['2022'] : cf['2024'];
+        const diff = (v1 - v0).toFixed(2);
+
+        // Etiqueta en el punto de inicio (año + valor)
+        ctx.font = '700 12px Inter, sans-serif';
+        ctx.fillStyle = color;
+        ctx.textAlign = 'right';
+        ctx.fillText(year, p0.x - 14, p0.y - 4);
+        ctx.fillText(fmt(v0, 2) + '%', p0.x - 14, p0.y + 12);
+
+        // Etiqueta en el punto final (valor)
+        ctx.textAlign = 'left';
+        ctx.fillText(fmt(v1, 2) + '%', p1.x + 14, p1.y + 4);
+
+        // Caja "+X.XX pp" en el punto medio de la línea (misma fila que la recta)
+        const midX = (p0.x + p1.x) / 2;
+        const midY = (p0.y + p1.y) / 2;
+        const text = '+' + diff + ' pp';
+        ctx.font = '700 12px Inter, sans-serif';
+        const w = ctx.measureText(text).width + 16;
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.roundRect ? ctx.roundRect(midX - w / 2, midY - 12, w, 22, 6) : ctx.rect(midX - w / 2, midY - 12, w, 22);
+        ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.textAlign = 'center';
+        ctx.fillText(text, midX, midY + 4);
+      });
+      ctx.restore();
+    }
+  };
+
   new Chart(ctx, {
     type: 'line',
     data: {
-      labels: ['ROIC reportado', 'ROIC contrafactual (planta congelada)'],
       datasets: [
-        { label: '2022', data: [reportado['2022'], cf['2022']], borderColor: COLOR.verde, backgroundColor: COLOR.verde, pointRadius: 6, borderWidth: 3 },
-        { label: '2024', data: [reportado['2024'], cf['2024']], borderColor: COLOR.terracota, backgroundColor: COLOR.terracota, pointRadius: 6, borderWidth: 3 },
+        { label: '2022', data: [{ x: 1, y: reportado['2022'] }, { x: 9, y: cf['2022'] }], borderColor: COLOR.verde, backgroundColor: COLOR.verde, pointRadius: 6, borderWidth: 3 },
+        { label: '2024', data: [{ x: 1, y: reportado['2024'] }, { x: 9, y: cf['2024'] }], borderColor: COLOR.terracota, backgroundColor: COLOR.terracota, pointRadius: 6, borderWidth: 3 },
       ]
     },
+    plugins: [roicLabelsPlugin],
     options: {
       responsive: true,
-      plugins: { legend: { position: 'top' }, tooltip: { callbacks: { label: (c) => `${c.dataset.label}: ${fmt(c.raw,2)}%` } } },
-      scales: { y: { title: { display: true, text: 'ROIC (%)' } } }
+      layout: { padding: { left: 20, right: 20, top: 10 } },
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: (c) => `${c.dataset.label}: ${fmt(c.raw.y,2)}%` } }
+      },
+      scales: {
+        x: {
+          type: 'linear', min: 0, max: 10,
+          ticks: {
+            stepSize: 1,
+            maxRotation: 0, minRotation: 0,
+            callback: (v) => v === 1 ? 'ROIC reportado' : v === 9 ? ['ROIC contrafactual', '(planta congelada)'] : ''
+          },
+          grid: { display: false }
+        },
+        y: { title: { display: true, text: 'ROIC (%)' } }
+      }
     }
   });
 }
