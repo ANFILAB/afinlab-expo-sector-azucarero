@@ -70,12 +70,12 @@ img { max-width: 100%; display: block; }
 
 .navbar-container {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   height: 100%;
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 24px;
+  position: relative;
 }
 
 .navbar-logo {
@@ -91,6 +91,9 @@ img { max-width: 100%; display: block; }
 .logo-img-afinlab { height: 60px; width: auto; object-fit: contain; }
 
 .navbar-menu {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   list-style: none;
   gap: 12px;
@@ -99,6 +102,7 @@ img { max-width: 100%; display: block; }
   padding: 0;
   overflow-x: auto;
   scrollbar-width: none;
+  max-width: 80%;
 }
 .navbar-menu::-webkit-scrollbar { display: none; }
 
@@ -338,6 +342,283 @@ img { max-width: 100%; display: block; }
   margin-bottom: 28px;
   border: 1px solid var(--borde);
 }
+/* Titular editorial dentro de una chart-card (headline + subtítulo técnico) */
+/* Layout de doble panel (dos canvas lado a lado dentro de una chart-card) */
+.dual-chart-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  padding: 20px;
+}
+.dual-chart-subtitle {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--texto-suave);
+  margin-bottom: 8px;
+  text-align: center;
+}
+.chart-subtitle-line {
+  font-style: italic;
+  color: var(--texto-suave);
+  font-size: 0.85rem;
+  padding: 16px 20px 0;
+}
+@media (max-width: 700px) {
+  .dual-chart-grid { grid-template-columns: 1fr; }
+}
+
+/* Layout del gráfico de impuesto + panel informativo lateral */
+.impuesto-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  padding: 20px;
+  align-items: center;
+}
+.impuesto-chart { min-width: 0; }
+.impuesto-ruta-box {
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  font-size: 0.85rem;
+}
+.impuesto-ruta-box.coazucar { background: rgba(160,82,45,0.10); }
+.impuesto-ruta-box.laredo { background: rgba(22,40,63,0.06); }
+.impuesto-ruta-box .titulo {
+  font-weight: 800;
+  font-size: 0.8rem;
+  letter-spacing: 0.3px;
+  margin-bottom: 6px;
+}
+.impuesto-ruta-box.coazucar .titulo { color: var(--rojo-alerta); }
+.impuesto-ruta-box.laredo .titulo { color: var(--azul-marino); }
+.impuesto-escalonamiento {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 2px solid var(--azul-marino);
+  opacity: 0.85;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--texto);
+}
+@media (max-width: 700px) {
+  .impuesto-grid { grid-template-columns: 1fr; }
+}
+
+/* Layout Panel ROIC/EVA + caja de sensibilidad lateral */
+.roic-eva-grid {
+  display: grid;
+  grid-template-columns: 1fr 220px;
+  gap: 20px;
+  padding: 20px;
+  align-items: start;
+}
+.roic-eva-sensibilidad {
+  background: var(--bg-gray-card);
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid var(--borde);
+}
+.roic-eva-sensibilidad .sens-titulo {
+  font-weight: 800;
+  font-size: 0.82rem;
+  text-align: center;
+  color: var(--texto);
+  margin-bottom: 4px;
+}
+.roic-eva-sensibilidad .sens-subtitulo {
+  font-size: 0.7rem;
+  text-align: center;
+  color: var(--texto-suave);
+  margin-bottom: 12px;
+}
+.roic-eva-sensibilidad .sens-fila {
+  text-align: center;
+  padding: 8px 0;
+  border-top: 1px solid var(--borde);
+}
+.roic-eva-sensibilidad .sens-fila:first-of-type { border-top: none; }
+.roic-eva-sensibilidad .sens-label {
+  font-size: 0.72rem;
+  color: var(--texto-suave);
+}
+.roic-eva-sensibilidad .sens-valor {
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+.roic-eva-sensibilidad .sens-nota {
+  font-size: 0.68rem;
+  color: var(--texto-suave);
+  font-style: italic;
+  text-align: center;
+  margin-top: 10px;
+}
+@media (max-width: 700px) {
+  .roic-eva-grid { grid-template-columns: 1fr; }
+}
+
+/* Secciones internas de una chart-card, con etiqueta editorial arriba (ej. "Lo que un analista habría escrito en 2021") */
+.card-section {
+  padding: 22px 22px 4px;
+}
+.card-section .kpi-row,
+.card-section .dual-chart-grid {
+  padding: 0;
+}
+.card-eyebrow {
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.card-eyebrow.eyebrow-verde { color: var(--verde-oscuro); }
+.card-eyebrow.eyebrow-terracota { color: var(--rojo-alerta); }
+
+/* Tabla comparativa L18: bloques agrupados con 2 columnas (años) */
+.test-table { padding: 16px 22px 6px; }
+.test-table .tt-header {
+  display: grid;
+  grid-template-columns: 1fr 140px 140px;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.test-table .tt-header .tt-year {
+  text-align: center;
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--texto);
+}
+.test-table .tt-header .tt-year-sub {
+  text-align: center;
+  font-style: italic;
+  font-size: 0.75rem;
+  color: var(--texto-suave);
+  margin-top: 2px;
+}
+.test-table .tt-block {
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+}
+.test-table .tt-block.tt-neutral { background: var(--bg-gray-card); }
+.test-table .tt-block.tt-highlight { background: rgba(160,82,45,0.12); }
+.test-table .tt-block-title {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.test-table .tt-block.tt-neutral .tt-block-title { color: var(--texto-suave); }
+.test-table .tt-block.tt-highlight .tt-block-title { color: var(--rojo-alerta); }
+.test-table .tt-row {
+  display: grid;
+  grid-template-columns: 1fr 140px 140px;
+  gap: 10px;
+  padding: 5px 0;
+  font-size: 0.88rem;
+}
+.test-table .tt-row .tt-v1, .test-table .tt-row .tt-v2 { text-align: center; font-weight: 600; }
+.test-table .tt-block.tt-highlight .tt-row .tt-v1,
+.test-table .tt-block.tt-highlight .tt-row .tt-v2 { font-weight: 800; }
+.test-table .tt-block.tt-highlight .tt-row .tt-v2 { color: var(--rojo-alerta); }
+
+/* Matriz 2x2 L19 */
+.test-matrix {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 16px;
+  padding: 16px 22px 0;
+}
+.test-matrix .tm-col-header {
+  text-align: center;
+  font-weight: 800;
+  font-size: 0.82rem;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  padding-bottom: 2px;
+}
+.test-matrix .tm-col-header.tm-h-verde { color: var(--verde-oscuro); }
+.test-matrix .tm-col-header.tm-h-terracota { color: var(--rojo-alerta); }
+.test-matrix .tm-cell {
+  border-radius: 10px;
+  padding: 16px;
+}
+.test-matrix .tm-cell.tm-verde { background: rgba(11,107,58,0.08); }
+.test-matrix .tm-cell.tm-terracota { background: rgba(160,82,45,0.10); }
+.test-matrix .tm-cell.tm-vacia {
+  background: var(--bg-gray-card);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  color: var(--texto-suave);
+}
+.test-matrix .tm-vacia-guion {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+}
+.test-matrix .tm-eyebrow {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  opacity: 0.75;
+}
+.test-matrix .tm-title {
+  font-weight: 800;
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+}
+.test-matrix .tm-cell.tm-verde .tm-title { color: var(--verde-oscuro); }
+.test-matrix .tm-cell.tm-terracota .tm-title { color: var(--rojo-alerta); }
+.test-matrix .tm-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  font-size: 0.82rem;
+  gap: 10px;
+}
+.test-matrix .tm-row .tm-label { color: var(--texto-suave); }
+.test-matrix .tm-row .tm-value { font-weight: 700; text-align: right; }
+.test-vuelco {
+  margin: 14px 22px 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--borde);
+  font-size: 0.85rem;
+}
+.test-vuelco strong { color: var(--rojo-alerta); }
+
+@media (max-width: 700px) {
+  .test-matrix { grid-template-columns: 1fr; }
+}
+
+.chart-headline {
+  padding: 22px 22px 4px;
+}
+.chart-headline h3 {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: clamp(1.05rem, 2.4vw, 1.35rem);
+  line-height: 1.3;
+  color: var(--azul-marino);
+  margin: 0 0 8px;
+}
+.chart-headline p {
+  font-style: italic;
+  color: var(--texto-suave);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
 .chart-card .chart-title-bar {
   background: var(--azul-marino);
   color: #fff;
@@ -381,6 +662,32 @@ img { max-width: 100%; display: block; }
 .heatmap-table tbody th { background: var(--fondo); color: var(--azul-marino); font-weight: 700; text-align: left; padding-left: 10px; white-space: nowrap; }
 .heatmap-table td { font-weight: 600; color: var(--azul-marino); cursor: default; transition: transform 0.15s ease; }
 .heatmap-table td:hover { transform: scale(1.12); position: relative; z-index: 2; box-shadow: 0 2px 8px rgba(0,0,0,0.25); }
+
+/* Franja de observaciones (positivas/negativas) bajo un gráfico de barras */
+.fco-observations { padding: 4px 20px 6px; }
+.fco-obs-caption {
+  font-size: 0.78rem;
+  color: var(--texto-suave);
+  margin-bottom: 10px;
+  text-align: center;
+}
+.fco-obs-strip {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+}
+.fco-obs-year {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+}
+.fco-obs-bar {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--verdeClaro, #6fae8c);
+}
+.fco-obs-bar.neg { background: var(--rojo-alerta); }
 
 .chart-card .chart-caption {
   padding: 16px 20px 20px;

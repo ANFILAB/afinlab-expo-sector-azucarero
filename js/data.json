@@ -1225,11 +1225,586 @@ null,
 "2022": 14.1,
 "2024": 10.9
 },
+"cce_ajustado": {
+"2014": {
+"bio": 517,
+"comercial": 21,
+"total": 539,
+"pab_pct": 96.1
+},
+"2025": {
+"bio": 387,
+"comercial": 52,
+"total": 439,
+"pab_pct": 88.1
+}
+},
 "grupo_coazucar": {
 "CARTAVIO": "Coazúcar",
 "SAN JACINTO": "Coazúcar",
 "CASA GRANDE": "Coazúcar",
 "LAREDO": "No-Coazúcar",
 "PARAMONGA": "No-Coazúcar"
+},
+"activo_corriente_2025": {
+"total": 1320971,
+"activo_biologico": 543675,
+"cuentas_por_cobrar": 348292,
+"inventarios": 299972,
+"resto": 97619,
+"efectivo": 31413
+},
+"nof_componentes_full": {
+"anios": [
+2015,
+2016,
+2017,
+2018,
+2019,
+2020,
+2021,
+2022,
+2023,
+2024,
+2025
+],
+"activo_biologico": [
+296480,
+353501,
+370780,
+398706,
+368918,
+345236,
+414855,
+525952,
+507663,
+519727,
+543675
+],
+"inventarios": [
+218325,
+216400,
+228936,
+210451,
+167965,
+204181,
+181790,
+240005,
+286368,
+273878,
+299972
+],
+"cxc_comerciales": [
+166336,
+179500,
+52614,
+52916,
+60830,
+87567,
+116223,
+97577,
+132124,
+137665,
+124545
+],
+"pagos_anticipados": [
+11964,
+10814,
+29292,
+30676,
+12370,
+14666,
+8821,
+3740,
+4924,
+11340,
+5119
+],
+"proveedores": [
+270667,
+252363,
+128444,
+139156,
+118504,
+137836,
+147314,
+178224,
+197224,
+171513,
+172041
+],
+"beneficios_provisiones": [
+20335,
+26094,
+62035,
+51418,
+59660,
+73295,
+89759,
+104536,
+119548,
+127478,
+97858
+]
+},
+"precio_azucar_ton": {
+"2020": 376,
+"2021": 471,
+"2022": 549,
+"2023": 665,
+"2024": 575,
+"2025": 481
+},
+"doble_entrada": {
+"cvrab_un_pct": {
+"2014": 16.09,
+"2015": 101.55,
+"2016": 84.25,
+"2017": -7.08,
+"2018": 31.61,
+"2019": -33.87,
+"2020": -5.7,
+"2021": 14.67,
+"2022": 8.25,
+"2023": 25.73,
+"2024": 31.58,
+"2025": 117.23
+},
+"bio_nof_pct": {
+"2015": 73.73,
+"2016": 73.38,
+"2017": 75.49,
+"2018": 79.4,
+"2019": 85.41,
+"2020": 78.37,
+"2021": 85.6,
+"2022": 89.98,
+"2023": 82.64,
+"2024": 80.75,
+"2025": 77.29
+}
+},
+"ebit_sectorial": {
+"2015": 269952,
+"2016": 400403,
+"2017": 81436,
+"2018": 60786,
+"2019": 93629,
+"2020": 293945,
+"2021": 490401,
+"2022": 636116,
+"2023": 593012,
+"2024": 520730,
+"2025": 289813
+},
+"el_nino": {
+"2017": {
+"CARTAVIO": 4.62,
+"SAN JACINTO": -3.47,
+"CASA GRANDE": 11.87,
+"LAREDO": -0.27,
+"PARAMONGA": -4.07
+},
+"2023": {
+"CARTAVIO": 8.86,
+"SAN JACINTO": 10.91,
+"CASA GRANDE": -0.91,
+"LAREDO": 17.6,
+"PARAMONGA": -36.43
+}
+},
+"pandemia": {
+"produccion_nacional_pct": -11.12,
+"utilidad_neta_pct": 209.5,
+"de_agregado_diff_pp": 0.82,
+"liquidez_2020": {
+"CARTAVIO": 1.52,
+"SAN JACINTO": 1.22,
+"CASA GRANDE": 4.43,
+"LAREDO": 1.18,
+"PARAMONGA": 0.94
+},
+"notas": {
+"CASA GRANDE": "capturó el alcohol sanitario (+50% de precio)",
+"CARTAVIO": "−65% en exportaciones; su Memoria refuta el auge del alcohol",
+"SAN JACINTO": "elevó su precio local de alcohol 41%",
+"LAREDO": "sin evento diferencial documentado",
+"PARAMONGA": "sostuvo el canal minorista por cercanía a Lima"
+}
+},
+"impuesto_2021": {
+"2020": 37304,
+"2021": 128825,
+"multiplo": 3.45,
+"rutas": [
+{
+"titulo": "BLOQUE COAZÚCAR",
+"cuerpo": "El Decreto Supremo de la Ley N.° 31110 nunca se emitió. Salto directo de 15% a 29,5%."
+},
+{
+"titulo": "LAREDO",
+"cuerpo": "Del régimen de la Ley N.° 27360 al régimen general. Impuesto corriente +341%."
+}
+],
+"escalonamiento": {
+"inicio": "2021 · 29,5%",
+"fin": "2025 · escalonamiento alcanza el 25%"
+}
+},
+"espejismo_2021": {
+"fm": 578152,
+"ptn": 93536,
+"liquidez": 1.5,
+"efectivo_2020": 165596,
+"efectivo_2021": 786254,
+"deuda_cp_empresas": {
+"Casa Grande": 240000,
+"Cartavio": 184000,
+"San Jacinto": 112000
+}
+},
+"destino_caja": {
+"pct_ai_neto_fco": 87.3,
+"payout_neto": 121.1,
+"fco_acumulado": 3271371,
+"ai_2022": 1102969,
+"un_acumulada": 2358155
+},
+"desalineamiento": {
+"anios": [
+2014,
+2015,
+2016,
+2017,
+2018,
+2019,
+2020,
+2021,
+2022,
+2023,
+2024,
+2025
+],
+"deuda_cp": [
+67683,
+114964,
+109333,
+107944,
+169284,
+151541,
+155651,
+685639,
+265099,
+400211,
+736095,
+967232
+]
+},
+"prueba_acida_2025": {
+"PARAMONGA": {
+"estandar": 1.4,
+"estricta": 1.11
+},
+"LAREDO": {
+"estandar": 1.07,
+"estricta": 0.53
+},
+"CASA GRANDE": {
+"estandar": 0.6,
+"estricta": 0.17
+},
+"CARTAVIO": {
+"estandar": 0.59,
+"estricta": 0.17
+},
+"SAN JACINTO": {
+"estandar": 0.49,
+"estricta": 0.15
+}
+},
+"composicion_pasivo": {
+"2014": {
+"total": 1470721,
+"deuda_fin_pct": 16.75
+},
+"2025": {
+"total": 2981989,
+"deuda_fin_pct": 53.97
+}
+},
+"costo_deuda": {
+"anios": [
+2014,
+2015,
+2016,
+2017,
+2018,
+2019,
+2020,
+2021,
+2022,
+2023,
+2024,
+2025
+],
+"gastos_financieros": [
+50935,
+54132,
+34076,
+27150,
+28941,
+33536,
+33131,
+47457,
+96568,
+107608,
+105320,
+109277
+],
+"ebit_full": [
+183392,
+269952,
+400403,
+81436,
+60786,
+93629,
+293945,
+490401,
+636116,
+593012,
+520730,
+289813
+],
+"deuda_financiera_total": {
+"2015": 325425,
+"2016": 321659,
+"2017": 272699,
+"2018": 346901,
+"2019": 384595,
+"2020": 379136,
+"2021": 1027184,
+"2022": 1189651,
+"2023": 1211198,
+"2024": 1443017,
+"2025": 1609240
+}
+},
+"roic_eva_detalle": {
+"anios": [
+2014,
+2015,
+2016,
+2017,
+2018,
+2019,
+2020,
+2021,
+2022,
+2023,
+2024,
+2025
+],
+"wacc_promedio": [
+9.49,
+6.89,
+7.43,
+6.98,
+5.28,
+5.92,
+5.13,
+5.38,
+9.55,
+10.99,
+8.15,
+8.44
+],
+"eva_sectorial_miles": [
+-173865,
+-28163,
+49020,
+-199769,
+-139354,
+-134816,
+59803,
+172956,
+96755,
+9658,
+41524,
+-176309
+],
+"eva_acumulado": -422559,
+"capital_invertido_sector_2025": 4940000
+},
+"control_temporal": {
+"bloques": [
+{
+"titulo": "Lo que se mantuvo constante",
+"tipo": "neutral",
+"filas": [
+[
+"Caída de la Utilidad Neta agregada",
+"−76.5%",
+"−75.8%"
+],
+[
+"Margen neto sectorial",
+"4.49%",
+"4.37%"
+]
+]
+},
+{
+"titulo": "Lo que cambió",
+"tipo": "highlight",
+"filas": [
+[
+"Variación del D/E agregado",
+"+1.03 pp",
+"+8.83 pp"
+],
+[
+"Fondo de Maniobra sectorial",
+"+459,899",
+"−60,949"
+],
+[
+"Liquidez corriente agregada",
+"2.04",
+"0.96"
+],
+[
+"Posición de Tesorería Neta",
+"−31,244",
+"−764,361"
+],
+[
+"Empresas con FM negativo",
+"0 de 5",
+"3 de 5"
+]
+]
+},
+{
+"titulo": "El balance que recibió el golpe",
+"tipo": "neutral",
+"filas": [
+[
+"Deuda financiera sectorial",
+"272,699",
+"1,609,240"
+],
+[
+"Efectivo sectorial",
+"66,967",
+"31,413"
+],
+[
+"Gastos financieros / EBIT",
+"33.34%",
+"37.71%"
+]
+]
+}
+]
+},
+"control_transversal": {
+"sector": {
+"titulo": "Sector completo",
+"filas": [
+[
+"Variación del D/E agregado",
+"+1.03 pp"
+],
+[
+"Fondo de Maniobra",
+"+459,899"
+],
+[
+"Empresas con FM negativo",
+"0 de 5"
+]
+]
+},
+"laredo": {
+"titulo": "Laredo · Grupo Manuelita",
+"filas": [
+[
+"Fondo de Maniobra",
+"+42,583 máx. histórico"
+],
+[
+"Deuda financiera de corto plazo",
+"−16,880 la redujo"
+],
+[
+"Resultados Acumulados 2021-25",
+"+25.9%"
+],
+[
+"Participación en el sindicado",
+"ninguna"
+]
+]
+},
+"coazucar": {
+"titulo": "Bloque Coazúcar · Grupo Gloria",
+"filas": [
+[
+"Empresas con FM negativo",
+"3 de 3"
+],
+[
+"Prueba Ácida",
+"0.59 / 0.49 / 0.60"
+],
+[
+"D/E de bloque",
+"112.37%"
+],
+[
+"Participación en el sindicado",
+"las tres"
+]
+]
+},
+"vuelco": "El bloque Coazúcar pasó de ser <strong>40.18 pp menos</strong> apalancado que el resto en 2020 a <strong>49.08 pp más</strong> en 2025 · 89.26 puntos en cinco ejercicios"
+},
+"discordancia": {
+"spread_promedio": {
+"CARTAVIO": 6.15,
+"SAN JACINTO": 1.83,
+"CASA GRANDE": -0.37,
+"PARAMONGA": -3.73,
+"LAREDO": -5.1
+},
+"de_2025": {
+"CARTAVIO": 167.9,
+"SAN JACINTO": 104.2,
+"CASA GRANDE": 95.8,
+"PARAMONGA": 68.7,
+"LAREDO": 52.8
+},
+"activos_2025": {
+"CARTAVIO": 897704,
+"SAN JACINTO": 697000,
+"CASA GRANDE": 1864624,
+"PARAMONGA": 2019098,
+"LAREDO": 951867
+}
+},
+"contrafactual_paramonga": {
+"2022": {
+"reportado": 7.01,
+"contrafactual": 14.1
+},
+"2024": {
+"reportado": 4.11,
+"contrafactual": 10.9
+},
+"crecimiento_capital": {
+"Paramonga": 157.2,
+"Sector": 42.4,
+"Casa Grande": 4.2
+}
 }
 }
